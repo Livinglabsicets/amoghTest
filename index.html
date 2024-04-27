@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-image: url(''); /* Replace 'background.jpg' with your image file */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+             touch-action: none; /*Disable default touch gestures */
+        }
+
+        #zoom-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #zoom-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform-origin: center;
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="zoom-container">
+        <img id="zoom-image" src="src/assets/images/homepage.png" alt="Background Image"> <!-- Replace 'background.jpg' with your image file -->
+    </div>
+
+    <script>
+        const zoomImage = document.getElementById('zoom-image');
+        let initialDistance = 0;
+        let initialScale = 1;
+
+        // Add touch event listeners
+        zoomImage.addEventListener('touchstart', handleTouchStart);
+        zoomImage.addEventListener('touchmove', handleTouchMove);
+        zoomImage.addEventListener('touchend', handleTouchEnd);
+
+        function handleTouchStart(event) {
+            if (event.touches.length === 2) {
+                // Calculate initial distance between two fingers
+                const touch1 = event.touches[0];
+                const touch2 = event.touches[1];
+                initialDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+                initialScale = getComputedStyle(zoomImage).transform.match(/matrix\(([^)]+)\)/)[1].split(', ')[0];
+            }
+        }
+
+        function handleTouchMove(event) {
+            if (event.touches.length === 2) {
+                // Calculate new distance between two fingers
+                const touch1 = event.touches[0];
+                const touch2 = event.touches[1];
+                const newDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+
+                // Calculate scale factor
+                const scaleFactor = newDistance / initialDistance;
+
+                // Apply scaling to the image
+                zoomImage.style.transform = `scale(${initialScale * scaleFactor})`;
+            }
+        }
+
+        function handleTouchEnd(event) {
+            // Reset initial values
+            initialDistance = 0;
+            initialScale = 1;
+        }
+    </script>
+</body>
+</html>
