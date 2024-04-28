@@ -8,8 +8,8 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #f0f0f0; /* Set a background color if needed */
-            touch-action: none; /* Disable default touch gestures */
+            background-color: #f0f0f0;
+            touch-action: none;
         }
 
         #zoom-container {
@@ -27,43 +27,38 @@
             height: 100%;
             object-fit: contain;
             transform-origin: center;
-            transition: transform 0.3s ease, opacity 0.5s ease; /* Add opacity transition */
+            transition: transform 0.3s ease, opacity 0.5s ease;
         }
     </style>
 </head>
 <body>
     <div id="zoom-container">
-        <img id="zoom-image" src="homepage.png" alt="Background Image"> <!-- Replace with your image source -->
+        <img id="zoom-image" src="homepage.png" alt="Background Image">
     </div>
 
     <script>
         const zoomImage = document.getElementById('zoom-image');
         let initialDistance = 0;
         let initialScale = 1;
-        let zoomed = false; // Flag to track if zoomed
+        let zoomed = false;
 
-        // Add touch event listener
         zoomImage.addEventListener('touchstart', handleTouchStart);
 
         function handleTouchStart(event) {
             if (!zoomed && event.touches.length === 2) {
-                // Calculate initial distance between two fingers
                 const touch1 = event.touches[0];
                 const touch2 = event.touches[1];
                 initialDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
                 initialScale = getComputedStyle(zoomImage).transform.match(/matrix\(([^)]+)\)/)[1].split(', ')[0];
 
-                // Apply scaling to the image (only zoom in)
-                const scaleFactor = 2; // Zoom factor
+                const scaleFactor = 2;
                 zoomImage.style.transform = `scale(${initialScale * scaleFactor})`;
                 zoomed = true;
 
-                // Add opacity transition (fade out)
                 zoomImage.style.opacity = 0;
                 setTimeout(() => {
-                    // Redirect to Google after fade-out transition
                     window.location.href = 'https://www.google.com';
-                }, 500); // Adjust the duration as needed
+                }, 500);
             }
         }
     </script>
