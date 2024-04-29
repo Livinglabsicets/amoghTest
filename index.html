@@ -1,66 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #f0f0f0;
-            touch-action: none;
-        }
-
-        #zoom-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        #zoom-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transform-origin: center;
-            transition: transform 0.3s ease, opacity 0.5s ease;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Zoom and Redirect</title>
+<style>
+  /* Styles for the image container */
+  .image-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Styles for the image */
+  .image-container img {
+     height: 1824px;
+     width: 2736px;
+     transition: transform 0.3s ease;
+  }
+  
+  /* Styles for the zoomed-in image */
+  .zoomed img {
+    transform: scale(2); /* Adjust the zoom level as needed */
+  }
+</style>
 </head>
 <body>
-    <div id="zoom-container">
-        <img id="zoom-image" src="homepage.png" alt="Background Image">
-    </div>
 
-    <script>
-        const zoomImage = document.getElementById('zoom-image');
-        let initialDistance = 0;
-        let initialScale = 1;
-        let zoomed = false;
+<div class="image-container" id="image-container">
+  <img src="./homepage.png" alt="Image" id="image">
+</div>
 
-        zoomImage.addEventListener('touchstart', handleTouchStart);
+<script>
+// Get the image container and image element
+var container = document.getElementById("image-container");
+var image = document.getElementById("image");
 
-        function handleTouchStart(event) {
-            if (!zoomed && event.touches.length === 2) {
-                const touch1 = event.touches[0];
-                const touch2 = event.touches[1];
-                initialDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
-                initialScale = getComputedStyle(zoomImage).transform.match(/matrix\(([^)]+)\)/)[1].split(', ')[0];
+// Boolean flag to track if the image is zoomed
+var isZoomed = false;
 
-                const scaleFactor = 2;
-                zoomImage.style.transform = `scale(${initialScale * scaleFactor})`;
-                zoomed = true;
+// Variables to store touch event data
+var initialTouch = null;
+var initialDistance = null;
 
-                zoomImage.style.opacity = 0;
-                setTimeout(() => {
-                    window.location.href = 'https://www.google.com';
-                }, 500);
-            }
-        }
-    </script>
+// Function to zoom in the image
+function zoomImage() {
+  // Toggle zoom class
+  container.classList.toggle("zoomed");
+  isZoomed = !isZoomed;
+
+  // Check if the image is zoomed
+  if (isZoomed) {
+    // Redirect to another application after 2 seconds (adjust as needed)
+    setTimeout(function() {
+      window.location.href = "https://developersamir1998.github.io/flipbook/"; // Change to your desired URL
+    }, 1000);
+  }
+}
+
+// Function to handle pinch zooming
+function pinchZoom(event) {
+  if (event.touches.length >= 2) {
+    // Calculate the initial distance between touches
+    initialTouch = [event.touches[0].clientX, event.touches[0].clientY];
+    initialDistance = Math.hypot(
+      event.touches[1].clientX - event.touches[0].clientX,
+      event.touches[1].clientY - event.touches[0].clientY
+    );
+  }
+}
+
+// Function to reset the image zoom
+function resetZoom() {
+  image.style.transform = "scale(1)";
+  initialTouch = null;
+  initialDistance = null;
+}
+
+// Add event listeners for touch events
+image.addEventListener("touchstart", zoomImage);
+image.addEventListener("touchmove", pinchZoom);
+image.addEventListener("touchend", resetZoom);
+</script>
+
 </body>
 </html>
